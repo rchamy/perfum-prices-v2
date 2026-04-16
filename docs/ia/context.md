@@ -13,6 +13,10 @@ El sistema debe contemplar dos perfiles de usuario:
 - **Administrador**: puede agregar, editar y deshabilitar tiendas de forma simple y configurable desde la interfaz web, sin necesidad de modificar código. Gestiona la configuración del scraper por tienda (URL, selectores, frecuencia, método de obtención).
 - **Usuario visitante**: puede buscar perfumes, ver precios históricos, filtrar, marcar favoritos y configurar notificaciones personales.
 
+La autenticación debe soportar:
+- Registro e inicio de sesión con email y contraseña.
+- Inicio de sesión con Google (OAuth 2.0), gestionado mediante Supabase Auth.
+
 Considera lo siguiente:
 Si se realiza scrapping, debemos ser indetectables.
 Si se utiliza API debe estar abierta y ser gratuita.
@@ -42,6 +46,9 @@ Plantea una solución que se pueda publicar en un servidor gratuito o mediante g
 
 El repositorio se encuentra en: https://github.com/rchamy/perfum-prices-v2
 El GitHub Project ya está creado en ese repositorio.
+
+**Regla de mantenimiento de documentación:**
+Ante cualquier instrucción que modifique, agregue o elimine un requerimiento, funcionalidad, actor, tienda, tecnología o estructura del sistema, se deben actualizar de forma inmediata y consistente todos los archivos de documentación afectados: `context.md`, `plan.md`, `UseCases.md`, `C4.md`, `er-diagram.md`, `sequential-diagram.md` y cualquier otro `.md` del proyecto. Ningún cambio queda reflejado solo en un archivo.
 
 Antes del desarrollo de la aplicación, quiero que explicitamente realices lo siguiente:
 - Generes casos de uso con mermaid en un archivo UseCases.md.

@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh project *)",
+      "Bash(gh auth *)",
+      "Bash(gh label *)",
+      "Bash(wait)",
+      "Bash(python3 -c \"import json,sys; items=json.load\\(sys.stdin\\)['items']; [print\\(i.get\\('title',''\\)\\) for i in items]\")",
+      "Bash(node -e \"const d=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\); const j=JSON.parse\\(d\\); j.items.forEach\\(i=>console.log\\(i.title\\)\\)\")"
+    ]
+  }
+}

@@ -150,8 +150,8 @@ flowchart TD
     Visitor["👤 Usuario Visitante"]
 
     Visitor --> R1{"¿Tiene cuenta?"}
-    R1 -->|"No"| R2["Registrarse con email"]
-    R1 -->|"Sí"| R3["Iniciar sesión"]
+    R1 -->|"No"| R2["Registrarse\n(email o Google)"]
+    R1 -->|"Sí"| R3["Iniciar sesión\n(email o Google)"]
 
     R3 --> F1["Marcar perfume como favorito"]
     F1 --> F2["Ver lista de favoritos"]
@@ -177,14 +177,23 @@ flowchart TD
 flowchart TD
     Visitor["👤 Usuario Visitante"]
 
-    Visitor --> R1["Registrarse"]
-    R1 --> R2["Ingresar email y contraseña"]
+    Visitor --> R1{"¿Cómo registrarse?"}
+    R1 -->|"Email"| R2["Ingresar email y contraseña"]
     R2 --> R3["Confirmar email"]
     R3 --> R4["Cuenta activa"]
 
-    Visitor --> L1["Iniciar sesión"]
-    L1 --> L2["Email + contraseña"]
+    R1 -->|"Google"| R5["Clic en 'Iniciar sesión con Google'"]
+    R5 --> R6["Redirige a Google OAuth 2.0"]
+    R6 --> R7["Usuario autoriza acceso"]
+    R7 --> R4
+
+    Visitor --> L1{"¿Cómo iniciar sesión?"}
+    L1 -->|"Email"| L2["Email + contraseña"]
     L2 --> L3["Sesión activa"]
+
+    L1 -->|"Google"| L4["Clic en 'Continuar con Google'"]
+    L4 --> L5["Redirige a Google OAuth 2.0"]
+    L5 --> L3
 
     L3 --> P1["Editar perfil"]
     P1 --> P2["Cambiar canal de notificación\n(mail / Telegram)"]
