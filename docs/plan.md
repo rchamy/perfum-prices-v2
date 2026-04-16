@@ -9,13 +9,63 @@
 
 ## Fase 0 — Documentación técnica previa
 
-| # | Entregable | Archivo | Estado |
-|---|---|---|---|
-| 1 | Casos de uso | `docs/UseCases.md` | ✅ Completado |
-| 2 | Arquitectura C4 (niveles 1–3) | `docs/C4.md` | ✅ Completado |
-| 3 | Modelo de datos | `docs/er-diagram.md` | ✅ Completado |
-| 4 | Diagramas de secuencia | `docs/sequential-diagram.md` | ✅ Completado |
-| 5 | Historias de usuario | `docs/user-stories.md` + GitHub Project | ⏳ Pendiente aprobación |
+- [x] Casos de uso (`docs/UseCases.md`)
+- [x] Arquitectura C4 niveles 1–3 (`docs/C4.md`)
+- [x] Modelo de datos (`docs/er-diagram.md`)
+- [x] Diagramas de secuencia (`docs/sequential-diagram.md`)
+- [ ] Historias de usuario (`docs/user-stories.md` + GitHub Project) — pendiente aprobación
+
+---
+
+## Fase 1 — Setup e infraestructura base
+
+- [ ] Inicializar monorepo (Turborepo + pnpm workspaces)
+- [ ] Configurar TypeScript base (`tsconfig.base.json`)
+- [ ] Provisionar proyecto Supabase y aplicar migraciones iniciales
+- [ ] Configurar variables de entorno (`.env.example`)
+- [ ] CI/CD: GitHub Actions (lint + test + deploy)
+
+---
+
+## Fase 2 — Backend: API REST
+
+- [ ] Scaffold `apps/api` (Express + TypeScript)
+- [ ] Autenticación con Supabase Auth (email/contraseña + Google OAuth)
+- [ ] Endpoints: productos, precios, tiendas, alertas, tendencias, health
+- [ ] Middleware de roles (`admin` / `visitor`)
+- [ ] Tests de integración
+
+---
+
+## Fase 3 — Worker: Scraper
+
+- [ ] Scaffold `apps/worker` (Node.js + TypeScript)
+- [ ] Integración puppeteer-extra + stealth plugin
+- [ ] Config de tiendas desde BD (URL, selectores, frecuencia, método)
+- [ ] Connector para MercadoLibre API pública
+- [ ] Anomaly Detector (0 resultados, errores HTTP, precios fuera de rango)
+- [ ] Cron jobs configurables por tienda
+- [ ] Scrapers Fase 1: Paris, Falabella, Ripley, Lider, Fasa, MercadoLibre, SAIRAM, Multimarcasperfumes, Alisha, Silk
+
+---
+
+## Fase 4 — Frontend: Angular
+
+- [ ] Scaffold `apps/frontend` (Angular + TypeScript)
+- [ ] Autenticación (email/contraseña + Google OAuth)
+- [ ] Vista pública: búsqueda, filtros, comparativa de precios
+- [ ] Gráficos de tendencia (Chart.js)
+- [ ] Favoritos y alertas de precio (umbral + canal: mail/Telegram)
+- [ ] Panel Admin: gestión de tiendas, scraper en vivo, dashboard de salud
+- [ ] Deploy en GitHub Pages / Vercel
+
+---
+
+## Fase 5 — Notificaciones
+
+- [ ] Servicio Nodemailer (Gmail SMTP)
+- [ ] Telegram Bot API
+- [ ] Configuración por usuario (canal + umbral)
 
 ---
 

@@ -1,0 +1,21 @@
+{
+  "name": "perfum-prices-v2",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run dev --workspace=apps/api",
+    "dev:worker": "npm run dev --workspace=apps/worker",
+    "dev:web": "npm run start --workspace=apps/web",
+    "build:api": "npm run build --workspace=apps/api",
+    "build:worker": "npm run build --workspace=apps/worker",
+    "build:web": "npm run build --workspace=apps/web",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
