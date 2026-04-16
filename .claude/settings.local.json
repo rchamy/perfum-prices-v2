@@ -11,7 +11,10 @@
       "Bash(npx @angular/cli@latest version)",
       "Bash(npx @angular/cli@latest new web --directory=apps/web --routing=true --style=scss --skip-git=true --skip-install=true --ssr=false)",
       "Bash(npm install *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(curl -s http://localhost:3000/ping)",
+      "Bash(curl *)",
+      "Bash(npx @angular/cli@latest build --configuration=development)"
     ]
   }
 }
