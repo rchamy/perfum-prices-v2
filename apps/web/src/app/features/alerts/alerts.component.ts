@@ -1,6 +1,5 @@
 import { Component, OnInit, signal } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { RouterLink } from '@angular/router'
 import { FormsModule } from '@angular/forms'
 import { ApiService } from '../../core/services/api.service'
 import type { Alert, CreateAlertDto } from '@perfum/shared'
@@ -8,7 +7,7 @@ import type { Alert, CreateAlertDto } from '@perfum/shared'
 @Component({
   selector: 'app-alerts',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, FormsModule],
   template: `
     <div class="page">
       <div class="container">
@@ -178,7 +177,7 @@ import type { Alert, CreateAlertDto } from '@perfum/shared'
   `],
 })
 export class AlertsComponent implements OnInit {
-  alerts = signal<Alert[]>([])
+  alerts = signal<any[]>([])
   loading = signal(true)
   showForm = signal(false)
   editing = signal<Alert | null>(null)
