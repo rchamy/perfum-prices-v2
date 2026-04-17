@@ -1,0 +1,9 @@
+{
+  "buildCommand": "npm run build --workspace=packages/shared && npm run build --workspace=apps/web",
+  "outputDirectory": "apps/web/dist/perfum-prices-v2/browser",
+  "installCommand": "npm ci",
+  "framework": "angular",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

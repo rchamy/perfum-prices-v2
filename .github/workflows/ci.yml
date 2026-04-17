@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared types
+        run: npm run build --workspace=packages/shared
+
+      - name: Typecheck API
+        run: cd apps/api && npx tsc --noEmit
+
+      - name: Typecheck Worker
+        run: cd apps/worker && npx tsc --noEmit
+
+      - name: Typecheck Frontend
+        run: cd apps/web && npx tsc --noEmit
+
+      - name: Test API
+        run: npm run test --workspace=apps/api
+
+      - name: Test Worker
+        run: npm run test --workspace=apps/worker

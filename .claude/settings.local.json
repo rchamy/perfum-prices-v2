@@ -22,7 +22,8 @@
       "Bash(curl -s \"http://localhost:3000/stores?all=true\")",
       "Bash(node -e \"const j=require\\('C:/temp_stores_all.json'\\); console.log\\('Total:', j.data?.length, '| Paris:', j.data?.find\\(s=>s.name==='Paris'\\) ? 'SI' : 'NO'\\)\")",
       "Bash(node -e \"const chunks=[]; process.stdin.on\\('data',c=>chunks.push\\(c\\)\\); process.stdin.on\\('end',\\(\\)=>{ const d=JSON.parse\\(Buffer.concat\\(chunks\\)\\); console.log\\(Object.keys\\(d[0]||{}\\).join\\(', '\\)\\); }\\)\")",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(git push *)"
     ]
   }
 }
