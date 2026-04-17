@@ -42,4 +42,10 @@ export class SupabaseService {
   async getSession() {
     return this.client.auth.getSession()
   }
+
+  async resetPassword(email: string) {
+    return this.client.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/callback`,
+    })
+  }
 }

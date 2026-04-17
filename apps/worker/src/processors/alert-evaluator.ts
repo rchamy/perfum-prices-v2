@@ -11,13 +11,23 @@ export async function evaluateAlerts(productId: string, storeId: string, newPric
 
   if (!alerts?.length) return
 
-  // Get previous price to compare
+  // Look up the store_product to get the correct ID for price queries
+  const { data: storeProduct } = await supabase
+    .from('store_products')
+    .select('id, product_url')
+    .eq('product_id', productId)
+    .eq('store_id', storeId)
+    .single()
+
+  if (!storeProduct) return
+
+  // Get previous price to compare (skip the most recent one we just wrote)
   const { data: prevPriceRow } = await supabase
     .from('prices')
     .select('price_normal, price_discounted')
-    .eq('store_product_id', storeId)
+    .eq('store_product_id', storeProduct.id)
     .order('captured_at', { ascending: false })
-    .limit(1)
+    .range(1, 1)
     .maybeSingle()
 
   const prevPrice = prevPriceRow?.price_discounted ?? prevPriceRow?.price_normal
@@ -25,13 +35,6 @@ export async function evaluateAlerts(productId: string, storeId: string, newPric
 
   const { data: storeRow } = await supabase.from('stores').select('name').eq('id', storeId).single()
   const { data: productRow } = await supabase.from('products').select('name').eq('id', productId).single()
-
-  const { data: storeProduct } = await supabase
-    .from('store_products')
-    .select('product_url')
-    .eq('product_id', productId)
-    .eq('store_id', storeId)
-    .single()
 
   for (const alert of alerts) {
     let triggered = false

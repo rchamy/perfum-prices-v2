@@ -1,9 +1,9 @@
 import cron from 'node-cron'
 import { supabase } from './db/supabase'
-import { scrapeProduct } from './connectors/scraper'
+import { scrapeProduct, discoverProductUrls } from './connectors/scraper'
 import { fetchMercadoLibrePerfumes } from './connectors/mercadolibre'
 import { detectAnomalies } from './processors/anomaly-detector'
-import { writePrices } from './processors/price-writer'
+import { writePrices, upsertDiscoveredUrl } from './processors/price-writer'
 
 const runningJobs = new Set<string>()
 
@@ -27,8 +27,22 @@ async function runStoreJob(storeId: string) {
 
   try {
     if (store.method === 'api') {
+      // ── MercadoLibre: paginated discovery + price fetch ──────────────────
       results = await fetchMercadoLibrePerfumes(store.api_config?.queryParams ?? {})
     } else {
+      // ── Scraper stores ────────────────────────────────────────────────────
+
+      // Phase 1: discover new product URLs from the listing page
+      if (store.listing_url && store.store_selectors?.length) {
+        console.log(`[Scheduler] Discovery phase for ${store.name}…`)
+        const discoveredUrls = await discoverProductUrls(store.listing_url, store.store_selectors)
+        for (const url of discoveredUrls) {
+          await upsertDiscoveredUrl(storeId, url)
+        }
+        console.log(`[Scheduler] Discovery done for ${store.name}: ${discoveredUrls.length} URLs`)
+      }
+
+      // Phase 2: scrape prices for all known store_products
       const { data: storeProducts } = await supabase
         .from('store_products')
         .select('product_url')
@@ -37,13 +51,17 @@ async function runStoreJob(storeId: string) {
 
       for (const sp of storeProducts ?? []) {
         const result = await scrapeProduct(sp.product_url, store.store_selectors)
-        if (result.price_normal !== null) results.push(result)
+        if (result.price_normal !== null || result.price_discounted !== null) results.push(result)
       }
     }
 
     const isAnomaly = await detectAnomalies(storeId, store.name, results)
-    if (isAnomaly) { status = 'error'; errorMessage = '0 productos obtenidos' }
-    else { await writePrices(storeId, results) }
+    if (isAnomaly) {
+      status = 'error'
+      errorMessage = '0 productos obtenidos'
+    } else {
+      await writePrices(storeId, results, store.method)
+    }
   } catch (err: any) {
     status = 'error'
     errorMessage = err.message
@@ -91,19 +109,25 @@ export async function startScheduler() {
     }
   })
 
-  // Poll job_queue for manual triggers
+  // Poll job_queue for manual triggers (every 5 seconds)
   cron.schedule('*/5 * * * * *', async () => {
     const { data: jobs } = await supabase
       .from('job_queue')
       .select('id, store_id')
       .eq('status', 'pending')
-      .limit(5)
+      .limit(1)
 
     for (const job of jobs ?? []) {
-      await supabase.from('job_queue').update({ status: 'running', picked_at: new Date().toISOString() }).eq('id', job.id)
-      runStoreJob(job.store_id)
-        .then(() => supabase.from('job_queue').update({ status: 'done' }).eq('id', job.id))
-        .catch(() => supabase.from('job_queue').update({ status: 'failed' }).eq('id', job.id))
+      await supabase
+        .from('job_queue')
+        .update({ status: 'running', picked_at: new Date().toISOString() })
+        .eq('id', job.id)
+      try {
+        await runStoreJob(job.store_id)
+        await supabase.from('job_queue').update({ status: 'done' }).eq('id', job.id)
+      } catch {
+        await supabase.from('job_queue').update({ status: 'failed' }).eq('id', job.id)
+      }
     }
   })
 }

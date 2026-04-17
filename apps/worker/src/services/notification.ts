@@ -1,16 +1,24 @@
 import nodemailer from 'nodemailer'
 import TelegramBot from 'node-telegram-bot-api'
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD,
-  },
-})
+const hasEmailCreds = !!(process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD)
+const hasTelegramCreds = !!process.env.TELEGRAM_BOT_TOKEN
 
-const bot = process.env.TELEGRAM_BOT_TOKEN
-  ? new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: false })
+if (!hasEmailCreds) console.warn('[notification] GMAIL_USER/GMAIL_APP_PASSWORD not set — email notifications disabled')
+if (!hasTelegramCreds) console.warn('[notification] TELEGRAM_BOT_TOKEN not set — Telegram notifications disabled')
+
+const transporter = hasEmailCreds
+  ? nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
+      },
+    })
+  : null
+
+const bot = hasTelegramCreds
+  ? new TelegramBot(process.env.TELEGRAM_BOT_TOKEN!, { polling: false })
   : null
 
 // --- Price alert for users ---
@@ -29,7 +37,7 @@ export async function sendPriceAlert(opts: {
   const discount = Math.round(((oldPrice - newPrice) / oldPrice) * 100)
   const priceFormatted = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(newPrice)
 
-  if ((channel === 'email' || channel === 'both') && email) {
+  if ((channel === 'email' || channel === 'both') && email && transporter) {
     await transporter.sendMail({
       from: `"Perfum Prices" <${process.env.GMAIL_USER}>`,
       to: email,
@@ -66,7 +74,7 @@ export async function sendScraperAlert(opts: {
   const adminEmail = process.env.ADMIN_EMAIL
   const adminChatId = process.env.ADMIN_TELEGRAM_CHAT_ID
 
-  if (adminEmail) {
+  if (adminEmail && transporter) {
     await transporter.sendMail({
       from: `"Perfum Prices" <${process.env.GMAIL_USER}>`,
       to: adminEmail,

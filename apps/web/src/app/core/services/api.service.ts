@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core'
 import type {
   Alert,
   CreateAlertDto,
-  Favorite,
   PaginatedResponse,
   PriceHistory,
   ProductDetail,
@@ -26,6 +25,10 @@ export class ApiService {
     return this.http.get<PaginatedResponse<ProductSummary>>(`${this.base}/products`, { params })
   }
 
+  getBrands() {
+    return this.http.get<{ data: string[] }>(`${this.base}/products/brands`)
+  }
+
   getProduct(id: string) {
     return this.http.get<{ product: ProductDetail }>(`${this.base}/products/${id}`)
   }
@@ -42,8 +45,10 @@ export class ApiService {
   }
 
   // Stores
-  getStores() {
-    return this.http.get<{ data: any[] }>(`${this.base}/stores`)
+  getStores(all = false) {
+    let params = new HttpParams()
+    if (all) params = params.set('all', 'true')
+    return this.http.get<{ data: any[] }>(`${this.base}/stores`, { params })
   }
 
   createStore(body: any) {
@@ -60,6 +65,18 @@ export class ApiService {
 
   testScrape(body: any) {
     return this.http.post(`${this.base}/stores/test-scrape`, body)
+  }
+
+  getStoreProducts(storeId: string) {
+    return this.http.get<{ data: any[] }>(`${this.base}/stores/${storeId}/products`)
+  }
+
+  addStoreProductUrl(storeId: string, productUrl: string) {
+    return this.http.post(`${this.base}/stores/${storeId}/products`, { product_url: productUrl })
+  }
+
+  removeStoreProductUrl(storeId: string, spId: string) {
+    return this.http.delete(`${this.base}/stores/${storeId}/products/${spId}`)
   }
 
   // Alerts
@@ -85,7 +102,7 @@ export class ApiService {
 
   // Favorites
   getFavorites() {
-    return this.http.get<{ data: Favorite[] }>(`${this.base}/favorites`)
+    return this.http.get<{ data: unknown[] }>(`${this.base}/favorites`)
   }
 
   addFavorite(productId: string) {

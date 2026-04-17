@@ -24,7 +24,7 @@ router.put('/me', authenticate, async (req: AuthRequest, res) => {
     .from('users')
     .update({ name, notification_channel })
     .eq('id', req.userId!)
-    .select()
+    .select('id, email, name, role, notification_channel, telegram_chat_id')
     .single()
 
   if (error) return res.status(400).json({ error: error.message })

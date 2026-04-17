@@ -73,13 +73,13 @@
 - [x] `RegisterComponent` — nombre + email + pass + Google, confirm email
 - [x] `CallbackComponent` — maneja redirect OAuth
 - [x] `HomeComponent` — hero + grid top descuentos + skeleton loading
-- [ ] `SearchComponent` + filtros (marca, notas, género, precio, tienda) — **próximo**
-- [ ] `ProductDetailComponent` + tabla de precios por tienda
-- [ ] `ChartsComponent` — gráfico de tendencia (Chart.js / ng2-charts)
-- [ ] `FavoritesComponent`
-- [ ] `AlertsComponent` — crear/editar/toggle alertas
-- [ ] `ProfileComponent` — editar perfil, vincular Telegram
-- [ ] Panel Admin: `StoresComponent`, `HealthComponent`, `UsersComponent`
+- [x] `SearchComponent` + filtros (género, tienda, precio, ordenar) + URL sync + paginación
+- [x] `ProductDetailComponent` + tabla de precios por tienda + notas olfativas + favorito toggle
+- [x] `PriceChartComponent` — gráfico de tendencia (Chart.js) integrado en ProductDetail, selector 7D/30D/90D/1A
+- [x] `FavoritesComponent`
+- [x] `AlertsComponent` — crear/editar/toggle alertas con búsqueda de producto inline
+- [x] `ProfileComponent` — editar perfil, vincular Telegram, cerrar sesión
+- [x] Panel Admin: `StoresComponent` (CRUD + test-scrape), `HealthComponent` (worker status + run manual), `UsersComponent` (paginado + cambio de rol)
 - [ ] Deploy en Vercel / GitHub Pages
 
 ---
@@ -131,15 +131,15 @@
 
 ## Próxima sesión — retomar aquí
 
-**`SearchComponent`** con filtros (marca, notas olfativas, género, rango de precio, tienda) → HU-07, HU-08
+**Pasos para poner en producción:**
 
-Luego:
-1. `ProductDetailComponent` + precios por tienda + gráfico de tendencia
-2. `FavoritesComponent` + `AlertsComponent`
-3. `ProfileComponent` + vinculación Telegram
-4. Panel Admin completo
-5. Configurar selectores reales de tiendas en BD
-6. CI/CD + deploy
+1. Aplicar en Supabase SQL editor:
+   - `supabase/migrations/002_fix_product_best_prices.sql`
+   - `supabase/seeds/001_stores.sql`
+2. Actualizar selectores CSS reales de cada tienda vía `/admin/stores` → "Probar"
+3. Configurar `GMAIL_USER`, `GMAIL_APP_PASSWORD`, `TELEGRAM_BOT_TOKEN` en `apps/worker/.env`
+4. Activar Google OAuth en Supabase Auth → Providers → Google
+5. CI/CD + deploy (Vercel frontend, Railway API + Worker)
 
 ---
 

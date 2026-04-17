@@ -20,6 +20,8 @@
     "@perfum/shared": "*",
     "@supabase/supabase-js": "^2.43.0",
     "chart.js": "^4.4.0",
+    "chartjs-adapter-date-fns": "^3.0.0",
+    "date-fns": "^4.1.0",
     "ng2-charts": "^7.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"

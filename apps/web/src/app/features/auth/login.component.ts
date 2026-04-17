@@ -20,6 +20,9 @@ import { SupabaseService } from '../../core/services/supabase.service'
         @if (error()) {
           <div class="alert alert--error">{{ error() }}</div>
         }
+        @if (resetSent()) {
+          <div class="alert alert--success">Te enviamos un email para restablecer tu contraseña. Revisa tu bandeja.</div>
+        }
 
         <button class="btn btn--outline btn--full btn--lg google-btn" (click)="loginWithGoogle()" [disabled]="loading()">
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" height="20" alt="Google" />
@@ -53,6 +56,10 @@ import { SupabaseService } from '../../core/services/supabase.service'
 
           <button type="submit" class="btn btn--primary btn--full btn--lg" [disabled]="loading() || form.invalid">
             @if (loading()) { <span class="spinner"></span> } @else { Ingresar }
+          </button>
+
+          <button type="button" class="btn-forgot" (click)="sendReset()" [disabled]="loading()">
+            ¿Olvidaste tu contraseña?
           </button>
         </form>
       </div>
@@ -99,12 +106,26 @@ import { SupabaseService } from '../../core/services/supabase.service'
       font-size: 1rem;
       line-height: 1;
     }
+    .btn-forgot {
+      display: block;
+      margin-top: .75rem;
+      width: 100%;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: .85rem;
+      color: var(--color-primary);
+      text-align: center;
+      &:hover { text-decoration: underline; }
+      &:disabled { opacity: .5; cursor: default; }
+    }
   `]
 })
 export class LoginComponent {
   form: FormGroup
   loading = signal(false)
   error = signal('')
+  resetSent = signal(false)
   showPassword = signal(false)
 
   constructor(
@@ -138,6 +159,24 @@ export class LoginComponent {
     this.loading.set(true)
     await this.supabase.signInWithGoogle()
     // redirect handled by Supabase
+  }
+
+  async sendReset() {
+    const email = this.form.get('email')?.value?.trim()
+    if (!email) {
+      this.error.set('Ingresa tu email en el campo de arriba para recuperar tu contraseña.')
+      return
+    }
+    this.loading.set(true)
+    this.error.set('')
+    this.resetSent.set(false)
+    const { error } = await this.supabase.resetPassword(email)
+    this.loading.set(false)
+    if (error) {
+      this.error.set('No se pudo enviar el email. Verifica que el email sea correcto.')
+    } else {
+      this.resetSent.set(true)
+    }
   }
 
   private translateError(msg: string): string {
